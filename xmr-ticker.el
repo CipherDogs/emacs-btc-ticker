@@ -33,64 +33,64 @@
   :group 'comms
   :prefix "xmr-ticker-")
 
-(defconst bitstamp-api-url "https://www.bitstamp.net/api/ticker/")
+(defconst xmr-ticker-api-url
+  "https://www.bw.com/exchange/config/controller/website/pricecontroller/getassistprice")
+
 (defcustom xmr-ticker-api-poll-interval 10
-  "Default interval to poll to the bitstamp api"
+  "Default interval to poll to the bitstamp api."
   :type 'number
   :group 'xmr-ticker)
 
 (defvar xmr-ticker-timer nil
-  "Bitstamp API poll timer")
+  "Bitstamp API poll timer.")
 
 (defvar xmr-ticker-mode-line " $0.00"
-  "Displayed on mode-line")
+  "Displayed on mode-line.")
 
 ;;very risky :)
 (put 'xmr-ticker-mode-line 'risky-local-variable t)
 
 (defun xmr-ticker-start()
+  "Start ticker."
   (unless xmr-ticker-timer
-    (setq xmr-ticker-timer
-          (run-at-time "0 sec"
-                       xmr-ticker-api-poll-interval
-                       #'xmr-ticker-fetch))
+    (setq xmr-ticker-timer (run-at-time "0 sec" xmr-ticker-api-poll-interval #'xmr-ticker-fetch))
     (xmr-ticker-update-status)))
 
 (defun xmr-ticker-stop()
-  (when xmr-ticker-timer
-    (cancel-timer xmr-ticker-timer)
-    (setq xmr-ticker-timer nil)
-    (if (boundp 'mode-line-modes)
-        (delete '(t xmr-ticker-mode-line) mode-line-modes))))
+  "Stop ticker."
+  (when xmr-ticker-timer (cancel-timer xmr-ticker-timer)
+        (setq xmr-ticker-timer nil)
+        (if (boundp 'mode-line-modes)
+            (delete '(t xmr-ticker-mode-line) mode-line-modes))))
 
 (defun xmr-ticker-update-status()
+  "Update status."
   (if (not(xmr-ticker-mode))
-      (progn
-        (if (boundp 'mode-line-modes)
-            (add-to-list 'mode-line-modes '(t xmr-ticker-mode-line) t)))))
+      (progn (if (boundp 'mode-line-modes)
+                 (add-to-list 'mode-line-modes '(t xmr-ticker-mode-line) t)))))
+
+(defun xmr-ticker-parse(json)
+  "Parse JSON."
+  (assoc-default 'xmr (assoc-default 'usd (assoc-default 'datas json))))
 
 (defun xmr-ticker-fetch()
-  (progn
-    (request
-     bitstamp-api-url
-     :parser 'json-read
-     :success (function*
-               (lambda(&key data &allow-other-keys)
-		 (setq xmr-ticker-mode-line
-		       (concat " $" (assoc-default 'last data))))))))
+  "Fetch data."
+  (progn (request xmr-ticker-api-url
+           :parser 'json-read
+           :success (function* (lambda
+                                 (&key
+                                  data
+                                  &allow-other-keys)
+                                 (setq xmr-ticker-mode-line (concat " $" (xmr-ticker-parse
+                                                                          data))))))))
 
 ;;;###autoload
-(define-minor-mode xmr-ticker-mode
-  "Minor mode to display the latest XMR price."
+(define-minor-mode xmr-ticker-mode "Minor mode to display the latest XMR price."
   :init-value nil
   :global t
   :lighter xmr-ticker-mode-line
-  (if xmr-ticker-mode
-       (progn
-        (xmr-ticker-start)
-         )
-    (xmr-ticker-stop)
-    ))
+  (if xmr-ticker-mode (progn (xmr-ticker-start))
+    (xmr-ticker-stop)))
 
 (provide 'xmr-ticker)
 ;;; xmr-ticker.el ends here
