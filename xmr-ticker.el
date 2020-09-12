@@ -4,7 +4,7 @@
 ;; Copyright (C) 2020  CipherDogs
 
 ;; Author: Jorge Niedbalski R. <jnr@metaklass.org>
-;; Version: 0.1
+;; Version: 1.0.0
 ;; Package-Requires: ((json "1.2") (request "0.2.0"))
 ;; Keywords: news
 
