@@ -1,21 +1,18 @@
-Emacs btc-ticker-mode
+Emacs xmr-ticker-mode
 =====================
 
-Emacs minor-mode to display current Bitcoin price on the
-mode-line.
-
-![Screenshot](https://github.com/pennersr/emacs-btc-ticker/blob/master/screenshot.png?raw=true)
+Emacs minor-mode to display current Monero price on the mode-line.
 
 Installation
 ------------
 
 Your .emacs file should looks like:
 
-    (require 'btc-ticker)
+    (require 'xmr-ticker)
 
     ;;Optional: You can setup the fetch interval
     ;;default: 10 secs
-    (setq btc-ticker-api-poll-interval 10)
+    (setq xmr-ticker-api-poll-interval 10)
 
     ;;Enable btc-ticker-mode
-    (btc-ticker-mode 1)
+    (xmr-ticker-mode 1)
