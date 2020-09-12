@@ -14,5 +14,5 @@ Your .emacs file should looks like:
     ;;default: 10 secs
     (setq xmr-ticker-api-poll-interval 10)
 
-    ;;Enable btc-ticker-mode
+    ;;Enable xmr-ticker-mode
     (xmr-ticker-mode 1)

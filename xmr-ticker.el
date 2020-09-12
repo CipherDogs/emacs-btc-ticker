@@ -1,6 +1,7 @@
-;;; btc-ticker.el --- Shows latest bitcoin price
+;;; xmr-ticker.el --- Shows latest monero price
 
 ;; Copyright (C) 2014  Jorge Niedbalski R.
+;; Copyright (C) 2020  CipherDogs
 
 ;; Author: Jorge Niedbalski R. <jnr@metaklass.org>
 ;; Version: 0.1
@@ -27,69 +28,69 @@
 (require 'request)
 (require 'json)
 
-(defgroup btc-ticker nil
-  "btc-ticker extension"
+(defgroup xmr-ticker nil
+  "xmr-ticker extension"
   :group 'comms
-  :prefix "btc-ticker-")
+  :prefix "xmr-ticker-")
 
 (defconst bitstamp-api-url "https://www.bitstamp.net/api/ticker/")
-(defcustom btc-ticker-api-poll-interval 10
+(defcustom xmr-ticker-api-poll-interval 10
   "Default interval to poll to the bitstamp api"
   :type 'number
-  :group 'btc-ticker)
+  :group 'xmr-ticker)
 
-(defvar btc-ticker-timer nil
+(defvar xmr-ticker-timer nil
   "Bitstamp API poll timer")
 
-(defvar btc-ticker-mode-line " $0.00"
+(defvar xmr-ticker-mode-line " $0.00"
   "Displayed on mode-line")
 
 ;;very risky :)
-(put 'btc-ticker-mode-line 'risky-local-variable t)
+(put 'xmr-ticker-mode-line 'risky-local-variable t)
 
-(defun btc-ticker-start()
-  (unless btc-ticker-timer
-    (setq btc-ticker-timer
+(defun xmr-ticker-start()
+  (unless xmr-ticker-timer
+    (setq xmr-ticker-timer
           (run-at-time "0 sec"
-                       btc-ticker-api-poll-interval
-                       #'btc-ticker-fetch))
-    (btc-ticker-update-status)))
+                       xmr-ticker-api-poll-interval
+                       #'xmr-ticker-fetch))
+    (xmr-ticker-update-status)))
 
-(defun btc-ticker-stop()
-  (when btc-ticker-timer
-    (cancel-timer btc-ticker-timer)
-    (setq btc-ticker-timer nil)
+(defun xmr-ticker-stop()
+  (when xmr-ticker-timer
+    (cancel-timer xmr-ticker-timer)
+    (setq xmr-ticker-timer nil)
     (if (boundp 'mode-line-modes)
-        (delete '(t btc-ticker-mode-line) mode-line-modes))))
+        (delete '(t xmr-ticker-mode-line) mode-line-modes))))
 
-(defun btc-ticker-update-status()
-  (if (not(btc-ticker-mode))
+(defun xmr-ticker-update-status()
+  (if (not(xmr-ticker-mode))
       (progn
         (if (boundp 'mode-line-modes)
-            (add-to-list 'mode-line-modes '(t btc-ticker-mode-line) t)))))
+            (add-to-list 'mode-line-modes '(t xmr-ticker-mode-line) t)))))
 
-(defun btc-ticker-fetch()
+(defun xmr-ticker-fetch()
   (progn
     (request
      bitstamp-api-url
      :parser 'json-read
      :success (function*
                (lambda(&key data &allow-other-keys)
-		 (setq btc-ticker-mode-line
+		 (setq xmr-ticker-mode-line
 		       (concat " $" (assoc-default 'last data))))))))
 
 ;;;###autoload
-(define-minor-mode btc-ticker-mode
-  "Minor mode to display the latest BTC price."
+(define-minor-mode xmr-ticker-mode
+  "Minor mode to display the latest XMR price."
   :init-value nil
   :global t
-  :lighter btc-ticker-mode-line
-  (if btc-ticker-mode
+  :lighter xmr-ticker-mode-line
+  (if xmr-ticker-mode
        (progn
-        (btc-ticker-start)
+        (xmr-ticker-start)
          )
-    (btc-ticker-stop)
+    (xmr-ticker-stop)
     ))
 
-(provide 'btc-ticker)
-;;; btc-ticker.el ends here
+(provide 'xmr-ticker)
+;;; xmr-ticker.el ends here
