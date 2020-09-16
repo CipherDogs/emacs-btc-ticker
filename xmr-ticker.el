@@ -34,7 +34,7 @@
   :prefix "xmr-ticker-")
 
 (defconst xmr-ticker-api-url
-  "https://www.bw.com/exchange/config/controller/website/pricecontroller/getassistprice")
+  "https://api.cryptonator.com/api/ticker/xmr-usd")
 
 (defcustom xmr-ticker-api-poll-interval 10
   "Default interval to poll to the bitstamp api."
@@ -71,7 +71,7 @@
 
 (defun xmr-ticker-parse(json)
   "Parse JSON."
-  (assoc-default 'xmr (assoc-default 'usd (assoc-default 'datas json))))
+  (assoc-default 'price (assoc-default 'ticker json)))
 
 (defun xmr-ticker-fetch()
   "Fetch data."
